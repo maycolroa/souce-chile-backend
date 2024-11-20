@@ -4,7 +4,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class Activity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column('text')
+  @Column('text', { unique: true })
   name: string;
   @Column('text')
   description: string;

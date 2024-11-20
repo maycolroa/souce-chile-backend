@@ -1,18 +1,25 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, LoginUserDto } from './dto';
+import { User } from './entities/user.entity';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-  //metodo para crear usuarios
+
+  // Método para registrar usuarios
   @Post('register')
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async registerUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.usersService.createUser(createUserDto);
   }
-  // metodo para logearse
+
+  // Método para iniciar sesión
   @Post('login')
-  loginUser(@Body() loginUserDto: LoginUserDto) {
-    return this.usersService.loginUser(loginUserDto);
+  async loginUser(@Body() loginUserDto: LoginUserDto) {
+    const user = await this.usersService.loginUser(loginUserDto);
+    return {
+      ok: true,
+      user, // Incluye el ID, nombre completo y email del usuario
+    };
   }
 }

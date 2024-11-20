@@ -1,4 +1,15 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateLawDto } from './create-law.dto';
+import { IsString, IsArray, IsOptional } from 'class-validator';
 
-export class UpdateLawDto extends PartialType(CreateLawDto) {}
+export class UpdateLawDto {
+  @IsOptional()
+  @IsString()
+  title?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsArray()
+  pdfs?: string[];
+}

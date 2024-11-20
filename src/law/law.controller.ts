@@ -1,34 +1,47 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  ParseUUIDPipe,
+  Query,
+} from '@nestjs/common';
 import { LawService } from './law.service';
 import { CreateLawDto } from './dto/create-law.dto';
-import { UpdateLawDto } from './dto/update-law.dto';
 
 @Controller('law')
 export class LawController {
   constructor(private readonly lawService: LawService) {}
 
+  // Crear una nueva ley
   @Post()
   create(@Body() createLawDto: CreateLawDto) {
     return this.lawService.create(createLawDto);
   }
 
+  // Obtener todas las leyes con paginación
   @Get()
-  findAll() {
-    return this.lawService.findAll();
+  findAll(@Query('page') page = 1, @Query('limit') limit = 50) {
+    return this.lawService.findAll(page, limit);
   }
 
+  // Obtener una ley por ID
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.lawService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.lawService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLawDto: UpdateLawDto) {
-    return this.lawService.update(+id, updateLawDto);
+  // Buscar leyes por interés
+  @Get('interest/:interest')
+  findByInterest(@Param('interest') interest: string) {
+    return this.lawService.findByInterest(interest);
   }
 
+  // Eliminar una ley por ID
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.lawService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.lawService.remove(id);
   }
 }
