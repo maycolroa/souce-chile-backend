@@ -1,4 +1,10 @@
-import { IsString, IsArray, IsOptional, ValidateNested } from 'class-validator';
+import {
+  IsString,
+  IsArray,
+  IsOptional,
+  ValidateNested,
+  IsNumber,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateLawDto {
@@ -20,7 +26,9 @@ export class CreateLawDto {
 
   @IsOptional()
   @IsArray()
-  articles?: Array<{ article: number; summary: string }>;
+  @ValidateNested({ each: true })
+  @Type(() => ArticleDto)
+  articles?: ArticleDto[];
 
   @IsOptional()
   @IsArray()
@@ -32,6 +40,14 @@ export class CreateLawDto {
 class InterestDto {
   @IsString()
   name: string;
+
+  @IsString()
+  summary: string;
+}
+
+class ArticleDto {
+  @IsNumber()
+  article: number;
 
   @IsString()
   summary: string;

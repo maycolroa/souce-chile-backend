@@ -37,6 +37,8 @@ export class CompanyService {
     empresaId: string,
     lawIds: string[],
   ): Promise<Company> {
+    console.log('Law IDs recibidos:', lawIds);
+
     const empresa = await this.companyRepository.findOne({
       where: { id: empresaId },
       relations: ['laws'],
@@ -49,6 +51,12 @@ export class CompanyService {
     const laws = await this.lawRepository.find({
       where: { id: In(lawIds) },
     });
+
+    if (laws.length !== lawIds.length) {
+      throw new Error(
+        `Algunos IDs de leyes no existen en la base de datos: ${lawIds}`,
+      );
+    }
 
     empresa.laws = laws;
     return this.companyRepository.save(empresa);

@@ -20,7 +20,7 @@ export class LawService {
       pdfs = [],
       interests = [],
       articles = [],
-      tema, // Asegurarse de extraer la nueva propiedad tema
+      tema,
       ...lawDetails
     } = createLawDto;
 
@@ -33,12 +33,13 @@ export class LawService {
     // Crear la nueva ley con todos sus datos, incluyendo el tema
     const law = this.lawRepository.create({
       ...lawDetails,
-      tema, // Guardar el tema
-      interests, // Guardar los intereses con nombre y resumen
-      articles, // Guardar los artículos
-      pdfs: lawPdfs, // Asociar los PDFs
+      tema,
+      interests,
+      articles,
+      pdfs: lawPdfs,
     });
 
+    // Guardar la ley con las fechas manejadas automáticamente
     return await this.lawRepository.save(law);
   }
 
@@ -46,24 +47,46 @@ export class LawService {
   async findAll(
     page: number = 1,
     limit: number = 50,
-  ): Promise<{ total: number; laws: Law[] }> {
+  ): Promise<{ total: number; laws: any[] }> {
     const skip = (page - 1) * limit;
+
     const [laws, total] = await this.lawRepository.findAndCount({
       skip,
       take: limit,
       relations: ['pdfs'], // Cargar PDFs relacionados
+      order: { createdAt: 'DESC' }, // Ordenar por fecha de creación descendente
     });
-    return { total, laws };
+
+    // Mapear los intereses con IDs únicos para el frontend
+    const mappedLaws = laws.map((law) => ({
+      ...law,
+      interests: law.interests.map((interest, index) => ({
+        id: `${law.id}-${index}`, // Generar un ID único para cada interés
+        name: interest.name,
+        summary: interest.summary,
+      })),
+    }));
+
+    return { total, laws: mappedLaws };
   }
 
   // Obtener una ley específica por ID, incluyendo sus PDFs
-  async findOne(id: string): Promise<Law> {
+  async findOne(id: string): Promise<any> {
     const law = await this.lawRepository.findOne({
       where: { id },
       relations: ['pdfs'], // Cargar PDFs relacionados
     });
     if (!law) throw new NotFoundException(`Ley con ID ${id} no encontrada`);
-    return law;
+
+    // Mapear los intereses con IDs únicos para el frontend
+    return {
+      ...law,
+      interests: law.interests.map((interest, index) => ({
+        id: `${law.id}-${index}`,
+        name: interest.name,
+        summary: interest.summary,
+      })),
+    };
   }
 
   // Eliminar una ley por su ID
@@ -73,12 +96,12 @@ export class LawService {
   }
 
   // Buscar leyes por interés
-  async findByInterest(interest: string): Promise<Law[]> {
+  async findByInterest(interest: string): Promise<any[]> {
     const laws = await this.lawRepository
       .createQueryBuilder('law')
       .leftJoinAndSelect('law.pdfs', 'pdfs')
       .where('law.interests @> :interest', {
-        interest: JSON.stringify([{ name: interest }]), // Busca coincidencias exactas en el array JSON
+        interest: JSON.stringify([{ name: interest }]),
       })
       .getMany();
 
@@ -88,6 +111,22 @@ export class LawService {
       );
     }
 
-    return laws;
+    // Mapear los intereses con IDs únicos para el frontend
+    return laws.map((law) => ({
+      ...law,
+      interests: law.interests.map((interest, index) => ({
+        id: `${law.id}-${index}`,
+        name: interest.name,
+        summary: interest.summary,
+      })),
+    }));
+  }
+
+  // Obtener leyes con fechas de creación y actualización
+  async findAllWithDates(): Promise<Law[]> {
+    return await this.lawRepository.find({
+      relations: ['pdfs'],
+      order: { createdAt: 'DESC' },
+    });
   }
 }
