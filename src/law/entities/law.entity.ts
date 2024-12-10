@@ -25,6 +25,27 @@ export class Law {
   @Column({ nullable: true }) // Propiedad para almacenar el tema
   tema?: string;
 
+  @Column({ nullable: true }) // Tipo de norma, como Decreto, Ley, etc.
+  tipo_norma?: string;
+
+  @Column({ nullable: true }) // Número de la norma
+  numero?: number;
+
+  @Column({ nullable: true }) // Año de publicación
+  año?: number;
+
+  @Column({ nullable: true }) // Descripción corta de la norma
+  descripcion_corta?: string;
+
+  @Column({ nullable: true }) // Ente que publica la norma
+  ente?: string;
+
+  @Column({ nullable: true }) // Sistema al que pertenece la norma
+  sistema?: string;
+
+  @Column({ default: false }) // Indicador de si la norma está derogada
+  derogada: boolean;
+
   @Column('jsonb', { nullable: true }) // Lista de intereses con nombre y resumen
   interests?: Array<{ name: string; summary: string }>;
 

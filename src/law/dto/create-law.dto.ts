@@ -4,6 +4,7 @@ import {
   IsOptional,
   ValidateNested,
   IsNumber,
+  IsBoolean,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -17,6 +18,34 @@ export class CreateLawDto {
   @IsOptional()
   @IsString()
   tema?: string; // Nueva propiedad para "tema"
+
+  @IsOptional()
+  @IsString()
+  tipo_norma?: string; // Nueva propiedad para "tipo_norma"
+
+  @IsOptional()
+  @IsNumber()
+  numero?: number; // Nueva propiedad para "numero"
+
+  @IsOptional()
+  @IsNumber()
+  año?: number; // Nueva propiedad para "año"
+
+  @IsOptional()
+  @IsString()
+  descripcion_corta?: string; // Nueva propiedad para "descripcion_corta"
+
+  @IsOptional()
+  @IsString()
+  ente?: string; // Nueva propiedad para "ente"
+
+  @IsOptional()
+  @IsString()
+  sistema?: string; // Nueva propiedad para "sistema"
+
+  @IsOptional()
+  @IsBoolean()
+  derogada?: boolean; // Nueva propiedad para "derogada"
 
   @IsOptional()
   @IsArray()

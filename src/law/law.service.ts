@@ -14,13 +14,20 @@ export class LawService {
     private readonly lawPDFRepository: Repository<LawPDF>,
   ) {}
 
-  // Crear una nueva ley con información detallada, incluyendo PDFs y el tema
+  // Crear una nueva ley con información detallada, incluyendo los nuevos atributos
   async create(createLawDto: CreateLawDto): Promise<Law> {
     const {
       pdfs = [],
       interests = [],
       articles = [],
       tema,
+      tipo_norma,
+      numero,
+      año,
+      descripcion_corta,
+      ente,
+      sistema,
+      derogada,
       ...lawDetails
     } = createLawDto;
 
@@ -30,10 +37,17 @@ export class LawService {
     );
     await this.lawPDFRepository.save(lawPdfs);
 
-    // Crear la nueva ley con todos sus datos, incluyendo el tema
+    // Crear la nueva ley con todos sus datos, incluyendo los nuevos atributos
     const law = this.lawRepository.create({
       ...lawDetails,
       tema,
+      tipo_norma,
+      numero,
+      año,
+      descripcion_corta,
+      ente,
+      sistema,
+      derogada,
       interests,
       articles,
       pdfs: lawPdfs,
@@ -60,7 +74,7 @@ export class LawService {
     // Mapear los intereses con IDs únicos para el frontend
     const mappedLaws = laws.map((law) => ({
       ...law,
-      interests: law.interests.map((interest, index) => ({
+      interests: law.interests?.map((interest, index) => ({
         id: `${law.id}-${index}`, // Generar un ID único para cada interés
         name: interest.name,
         summary: interest.summary,
@@ -81,7 +95,7 @@ export class LawService {
     // Mapear los intereses con IDs únicos para el frontend
     return {
       ...law,
-      interests: law.interests.map((interest, index) => ({
+      interests: law.interests?.map((interest, index) => ({
         id: `${law.id}-${index}`,
         name: interest.name,
         summary: interest.summary,
@@ -114,7 +128,7 @@ export class LawService {
     // Mapear los intereses con IDs únicos para el frontend
     return laws.map((law) => ({
       ...law,
-      interests: law.interests.map((interest, index) => ({
+      interests: law.interests?.map((interest, index) => ({
         id: `${law.id}-${index}`,
         name: interest.name,
         summary: interest.summary,

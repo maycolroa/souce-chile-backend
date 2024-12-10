@@ -35,9 +35,16 @@ export class LawController {
   async findAll(@Query('page') page = 1, @Query('limit') limit = 50) {
     const { laws, total } = await this.lawService.findAll(page, limit);
 
-    // Mapear las leyes para incluir fechas y un ID único en los intereses
+    // Mapear las leyes para incluir todos los nuevos atributos y un ID único en los intereses
     const mappedLaws = laws.map((law) => ({
       ...law,
+      tipo_norma: law.tipo_norma,
+      numero: law.numero,
+      año: law.año,
+      descripcion_corta: law.descripcion_corta,
+      ente: law.ente,
+      sistema: law.sistema,
+      derogada: law.derogada,
       createdAt: law.createdAt,
       updatedAt: law.updatedAt,
       interests: law.interests.map((interest, index) => ({
@@ -60,6 +67,13 @@ export class LawController {
 
     return {
       ...law,
+      tipo_norma: law.tipo_norma,
+      numero: law.numero,
+      año: law.año,
+      descripcion_corta: law.descripcion_corta,
+      ente: law.ente,
+      sistema: law.sistema,
+      derogada: law.derogada,
       createdAt: law.createdAt,
       updatedAt: law.updatedAt,
     };
@@ -70,9 +84,16 @@ export class LawController {
   async findByInterest(@Param('interest') interest: string) {
     const laws = await this.lawService.findByInterest(interest);
 
-    // Mapear las leyes para incluir fechas y un ID único en los intereses
+    // Mapear las leyes para incluir los nuevos atributos
     return laws.map((law) => ({
       ...law,
+      tipo_norma: law.tipo_norma,
+      numero: law.numero,
+      año: law.año,
+      descripcion_corta: law.descripcion_corta,
+      ente: law.ente,
+      sistema: law.sistema,
+      derogada: law.derogada,
       createdAt: law.createdAt,
       updatedAt: law.updatedAt,
       interests: law.interests.map((interest, index) => ({
